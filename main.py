@@ -74,9 +74,11 @@ def main():
                     show_pauseMenu = False
                     show_mainmenu = True
                     show_playerSheet = False
-        # player sheet
-        if show_playerSheet:
-            playerSheet.handle_event(events)
+            # player sheet
+            if show_playerSheet:
+                playerSheet.handle_event(event)
+                if playerSheet.handle_event(event) == "Resume":
+                    show_playerSheet = False
         # screen
         screen.fill(WHITE)
         if show_mainmenu:
@@ -84,6 +86,7 @@ def main():
             mainMenu.update(screenWidth, screenHeight)
             mainMenu.draw()
         if show_playerSheet:
+            playerSheet.update(screenWidth, screenHeight)
             playerSheet.draw()
         if show_pauseMenu:
             Background_volume,soundEffect_volume,frameRate,brightness = pauseMenu.updateData(Background_volume, soundEffect_volume, frameRate, brightness)

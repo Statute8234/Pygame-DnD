@@ -3,9 +3,10 @@ import sys
 import pygame_widgets
 from pygame_widgets.slider import Slider
 from pygame_widgets.textbox import TextBox
-import pygame_gui
 import random
-import pygame_textinput
+import tkinter as tk
+from tkinter import filedialog
+import numpy as np
 # hand made files
 import inputBox
 # color
@@ -70,6 +71,56 @@ class Button:
     def reset(self):
         self.clicked = False
         self.color = self.inactive_color
+# Circle Button
+class CircleButton:
+    def __init__(self, x, y, radius, image_path=None):
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.image_path = image_path
+        if self.image_path:
+            self.load_image()
+        self.surface = pygame.Surface((2*radius, 2*radius), pygame.SRCALPHA)
+        pygame.draw.circle(self.surface, (255, 255, 255, 100), (radius, radius), radius)
+        self.rect = self.surface.get_rect(center=(x, y))
+    
+    def load_image(self):
+        self.image = pygame.image.load(self.image_path).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (2*self.radius, 2*self.radius))
+        self.image = self.crop_circle(self.image)
+
+    def crop_circle(self, img=None):
+        if img is None:
+            img = self.image
+        # Create a mask with the same dimensions as the image
+        mask = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
+        pygame.draw.circle(mask, (255, 255, 255), (self.radius, self.radius), self.radius)
+        # Apply the circular mask to the image preserving the alpha channel
+        cropped_img = pygame.Surface((2*self.radius, 2*self.radius), pygame.SRCALPHA)
+        cropped_img.blit(img, (0, 0))
+        cropped_img.blit(mask, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
+        return cropped_img
+    
+    def draw(self, screen):
+        screen.blit(self.surface, self.rect.topleft)
+        if hasattr(self, 'image'):
+            screen.blit(self.image, self.rect.topleft)
+    
+    def upload_image(self):
+        root = tk.Tk()
+        root.withdraw()  # Hide the root window
+        file_path = filedialog.askopenfilename()
+        if file_path:
+            self.image_path = file_path
+            self.load_image()
+        root.destroy()
+
+    def handle_events(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # Check if the mouse click is within the button
+            mouse_pos = pygame.mouse.get_pos()
+            if self.rect.collidepoint(mouse_pos):
+                self.upload_image()
 # pause menu
 class PauseMenu:
     def __init__(self, screen):
@@ -176,15 +227,17 @@ class PlayerSheet:
         self.screen = screen
         self.character_limit = 9
         self.labels = {
-            "name": Text("Name:", 36, BLACK, (10, 10)),
-            "Level": Text("Level:", 36, BLACK, (10, 40)),
-            "strength": Text("Strength:", 36, BLACK, (10, 70)),
-            "dexterity": Text("Dexterity:", 36, BLACK, (10, 100)),
-            "constitution": Text("Constitution:", 36, BLACK, (10, 130)),
+            "Player Image": Text("Player Image:", 36, BLACK, (10, 10)),
+            "Name": Text("Name:", 36, BLACK, (10, 60)),
+            "Level": Text("Level:", 36, BLACK, (10, 90)),
+            "Strength": Text("Strength:", 36, BLACK, (10, 120)),
+            "Sexterity": Text("Dexterity:", 36, BLACK, (10, 150)),
+            "Constitution": Text("Constitution:", 36, BLACK, (10, 180)),
             # Add more labels for other attributes as needed
         }
-        self.textBox = inputBox.InputBox(100,10,100,25,BLACK,RED,GREEN)
-        self.Resume = Button(50, 540, 50, 50, "Resume", RED, BLACK)
+        self.textBox = inputBox.InputBox(100,60,100,25,BLACK,RED,GREEN)
+        self.Resume = Button(50, 540, 100, 50, "Resume", RED, BLACK)
+        self.playerImage = CircleButton(200,30, 20, "Assets\photo.png")
 
     def draw(self):
         for label in self.labels.values():
@@ -192,17 +245,17 @@ class PlayerSheet:
 
         self.textBox.draw(self.screen)
         self.Resume.draw(self.screen)
-        self.circleButton.draw(self.screen)
+        self.playerImage.draw(self.screen)
 
     def update(self, screenHeight, screenWidth):
         button_x = (screenHeight / 2) - 50
         self.Resume.x = button_x
-
         self.textBox.update()
 
     def handle_event(self, event):
         pygame_widgets.update(event)
         self.textBox.handle_event(event)
+        self.playerImage.handle_events(event)
         # button
         self.Resume.handle_event(event)
         if self.Resume.clicked:

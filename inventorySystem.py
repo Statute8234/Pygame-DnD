@@ -8,35 +8,61 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
 BLACK = (0,0,0)
-# inventory slot
-class InventorySlot():
-    def __init__(self, name, pos, image_path, size=(50, 50)):
-        self.name = name
-        self.pos = pos
-        self.original_image = pygame.image.load(image_path)
-        self.image = pygame.transform.scale(self.original_image, size)
-        self.rect = self.image.get_rect()
-        self.rect.topleft = pos
-        self.font = pygame.font.Font(None, 20)
-        self.count = 0
-    
-    def draw(self, screen):
-        nameText = self.font.render(str(self.count), True, BLACK)
-        screen.blit(self.image, self.rect)
-        screen.blit(nameText, self.rect.midright)
-# Inventory
-class Inventory():
-    def __init__(self, pos, image_path, size=(600, 50)):
-        self.x, self.y = pos
-        self.slots = []
-        self.original_image = pygame.image.load(image_path)
-        self.image = pygame.transform.scale(self.original_image, size)
-        self.rect = self.image.get_rect()
-        self.rect.center = pos
-        self.slots.append(InventorySlot("coin",(self.rect.left + 10,self.y - 25),r"Assets\coin.png"))
-        self.slots.append(InventorySlot("healing potion",(self.rect.left + 80,self.y - 25),r"Assets\game.png"))
+GRAY = (128,128,128)
+# Inventory Slot
+class InventorySlot:
+    def __init__(self, x, y, width, height, color):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.color = color
+        self.outlineSize = 1
 
     def draw(self, screen):
-        screen.blit(self.image, self.rect)
-        for slot in self.slots:
-            slot.draw(screen)
+        pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.width, self.height), self.outlineSize)
+    
+    def handle_event(self, event):
+        mouse_pos = pygame.mouse.get_pos()
+        if self.x < mouse_pos[0] < self.x + self.width and self.y < mouse_pos[1] < self.y + self.height:
+            self.outlineSize = 2
+        else:
+            self.outlineSize = 1
+# Inventory
+class Inventory:
+    def __init__(self, x, y, width, height, num_columns, num_rows,  padding=5):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.num_columns = num_columns
+        self.num_rows = num_rows
+        self.padding = padding
+        self.cell_width = (width - padding * (num_columns - 1)) // num_columns
+        self.cell_height = (height - padding * (num_rows - 1)) // num_rows
+        self.cells = []
+        self.create_cells()
+    
+    def create_cells(self):
+        for row in range(self.num_rows):
+            for col in range(self.num_columns):
+                cell_x = self.x + col * (self.cell_width + self.padding)
+                cell_y = self.y + row * (self.cell_height + self.padding)
+                cell_rect = InventorySlot(cell_x, cell_y, self.cell_width, self.cell_height, GRAY)
+                self.cells.append(cell_rect)
+
+    def draw(self, screen):
+        for cell in self.cells:
+            cell.draw(screen)
+    
+    def update(self, new_x, new_y, width, height):
+        self.cell_width = (width - self.padding * (self.num_columns - 1)) // self.num_columns
+        self.cell_height = (height - self.padding * (self.num_rows - 1)) // self.num_rows
+        self.x = new_x
+        self.y = new_y
+        self.cells = []
+        self.create_cells()
+    
+    def handle_event(self, event):
+        for cell in self.cells:
+            cell.handle_event(event)

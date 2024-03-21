@@ -85,10 +85,10 @@ def main():
             Background_volume,soundEffect_volume,frameRate,brightness = mainMenu.updateData(Background_volume, soundEffect_volume, frameRate, brightness)
             mainMenu.update(screenWidth, screenHeight)
             mainMenu.draw()
-        if show_playerSheet:
+        elif show_playerSheet:
             playerSheet.update(screenWidth, screenHeight)
             playerSheet.draw()
-        if show_pauseMenu:
+        elif show_pauseMenu:
             Background_volume,soundEffect_volume,frameRate,brightness = pauseMenu.updateData(Background_volume, soundEffect_volume, frameRate, brightness)
             pauseMenu.update(screenWidth, screenHeight)
             pauseMenu.draw()

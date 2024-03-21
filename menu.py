@@ -78,6 +78,7 @@ class CircleButton:
         self.x = x
         self.y = y
         self.radius = radius
+        self.color = RED
         self.image_path = image_path
         if self.image_path:
             self.load_image()
@@ -106,6 +107,7 @@ class CircleButton:
         screen.blit(self.surface, self.rect.topleft)
         if hasattr(self, 'image'):
             screen.blit(self.image, self.rect.topleft)
+        pygame.draw.circle(screen, self.color, [self.x, self.y], self.radius, 3)
     
     def upload_image(self):
         root = tk.Tk()
@@ -239,7 +241,7 @@ class PlayerSheet:
         self.textBox = inputBox.InputBox(100,60,100,25,BLACK,RED,GREEN)
         self.Resume = Button(50, 540, 100, 50, "Resume", RED, BLACK)
         self.playerImage = CircleButton(200,30, 20, "Assets\photo.png")
-        self.invintory = inventorySystem.Inventory((300,500), "Assets\Inventory.png")
+        self.invintory = inventorySystem.Inventory(30,420,100,550,10,1)
 
     def draw(self):
         for label in self.labels.values():
@@ -253,12 +255,19 @@ class PlayerSheet:
     def update(self, screenHeight, screenWidth):
         button_x = (screenHeight / 2) - 50
         self.Resume.x = button_x
+        self.Resume.y = screenWidth - 70
+        new_width = (screenWidth - 150)
+        new_Height = new_width / 5
+        new_posX = (screenHeight / 2) - (new_width / 2)
+        new_posY = (screenWidth / 2) + (new_Height * 1.8)
+        self.invintory.update(new_posX, new_posY,new_Height, new_width)
         self.textBox.update()
 
     def handle_event(self, event):
         pygame_widgets.update(event)
         self.textBox.handle_event(event)
         self.playerImage.handle_events(event)
+        self.invintory.handle_event(event)
         # button
         self.Resume.handle_event(event)
         if self.Resume.clicked:
@@ -353,29 +362,32 @@ class Menu:
             loadSlot.x = button_x
 
     def handle_event(self, event):
-        for button in self.buttons:
-            button.handle_event(event)
-            if button.color == button.active_color:
-                button.textColor = button.active_color
-            else:
-                button.textColor = button.inactive_color
-            if button.clicked:
-                button.reset()
-                if button.text == "Options":
-                    self.showSettings = True
-                if button.text == "Load Game":
-                    self.showLoadScreen = True
-                else:
-                    return button.text
+        if self.showLoadScreen:
             # loadslot
             for loadSlot in self.loadSlots:
                 loadSlot.handle_event(event)
                 if loadSlot.color == loadSlot.active_color:
                     loadSlot.textColor = loadSlot.active_color
                 else:
-                    loadSlot.textColor = loadSlot.inactive_color
+                        loadSlot.textColor = loadSlot.inactive_color
                 if loadSlot.clicked:
                     loadSlot.reset()
+        elif not(self.showLoadScreen and self.showSettings):
+            for button in self.buttons:
+                button.handle_event(event)
+                if button.color == button.active_color:
+                    button.textColor = button.active_color
+                else:
+                    button.textColor = button.inactive_color
+                if button.clicked:
+                    button.reset()
+                    if button.text == "Options":
+                        self.showSettings = True
+                    if button.text == "Load Game":
+                        self.showLoadScreen = True
+                    else:
+                        return button.text
+        if (self.showLoadScreen or self.showSettings):
             # back button
             pygame_widgets.update(event)
             self.backButton.handle_event(event)

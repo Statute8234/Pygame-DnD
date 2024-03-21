@@ -8,7 +8,7 @@ import tkinter as tk
 from tkinter import filedialog
 import numpy as np
 # hand made files
-import inputBox
+import colorInput
 import inventorySystem
 # color
 def RANDOM_COLOR():
@@ -32,6 +32,10 @@ class Text:
         self.text = new_text
         self.rendered_text = None  # Clear the rendered text to update it
 
+    def update_position(self, new_position):
+        self.position = new_position
+        self.rendered_text = None
+        
     def render(self, screen):
         if self.rendered_text is None:
             self.rendered_text = self.font.render(self.text, True, self.color)
@@ -201,6 +205,20 @@ class PauseMenu:
         button_x = (screenHeight / 2) - 100
         for button in self.buttons:
             button.x = button_x
+        self.backButton.x = (screenHeight / 2) - 200
+        # sliders
+        self.sound.update_position(((screenHeight / 2) - 70,200))
+        self.sound_slider._x = (screenHeight / 2) - 70
+        self.sound_output._x = (screenHeight / 2) + 150
+        self.sound_effects.update_position(((screenHeight / 2) - 70,300))
+        self.sound_effects_slider._x = (screenHeight / 2) - 70
+        self.sound_effects_output._x = (screenHeight / 2) + 150
+        self.frame_rate.update_position(((screenHeight / 2) - 70,400))
+        self.frame_rate_slider._x = (screenHeight / 2) - 70
+        self.frame_rate_output._x = (screenHeight / 2) + 150
+        self.brightness_text.update_position(((screenHeight / 2) - 70,500))
+        self.brightness_slider._x = (screenHeight / 2) - 70
+        self.brightness_output._x = (screenHeight / 2) + 150
 
     def handle_event(self, event):
         for button in self.buttons:
@@ -238,11 +256,11 @@ class PlayerSheet:
             "Constitution": Text("Constitution:", 36, BLACK, (10, 180)),
             # Add more labels for other attributes as needed
         }
-        self.textBox = inputBox.InputBox(100,60,100,25,BLACK,RED,GREEN)
+        self.textBox = colorInput.InputBox(100,60,100,25,BLACK,RED,GREEN)
         self.Resume = Button(50, 540, 100, 50, "Resume", RED, BLACK)
         self.playerImage = CircleButton(200,30, 20, "Assets\photo.png")
         self.invintory = inventorySystem.Inventory(30,420,525,50,10,3)
-        self.colorPicker = inputBox.ColorPicker(600,600)
+        self.colorPicker = colorInput.ColorPicker(600,600)
 
     def draw(self):
         for label in self.labels.values():
@@ -359,11 +377,26 @@ class Menu:
         button_x = (screenHeight / 2) - 100
         for button in self.buttons:
             button.x = button_x
+        self.backButton.x = (screenHeight / 2) - 200
+        # sliders
+        self.sound.update_position(((screenHeight / 2) - 70,200))
+        self.sound_slider._x = (screenHeight / 2) - 70
+        self.sound_output._x = (screenHeight / 2) + 150
+        self.sound_effects.update_position(((screenHeight / 2) - 70,300))
+        self.sound_effects_slider._x = (screenHeight / 2) - 70
+        self.sound_effects_output._x = (screenHeight / 2) + 150
+        self.frame_rate.update_position(((screenHeight / 2) - 70,400))
+        self.frame_rate_slider._x = (screenHeight / 2) - 70
+        self.frame_rate_output._x = (screenHeight / 2) + 150
+        self.brightness_text.update_position(((screenHeight / 2) - 70,500))
+        self.brightness_slider._x = (screenHeight / 2) - 70
+        self.brightness_output._x = (screenHeight / 2) + 150
         # loadslot
         for loadSlot in self.loadSlots:
             loadSlot.x = button_x
 
     def handle_event(self, event):
+        pygame_widgets.update(event)
         if self.showLoadScreen:
             # loadslot
             for loadSlot in self.loadSlots:
@@ -374,7 +407,16 @@ class Menu:
                         loadSlot.textColor = loadSlot.inactive_color
                 if loadSlot.clicked:
                     loadSlot.reset()
-        elif not(self.showLoadScreen and self.showSettings):
+        if self.showLoadScreen or self.showSettings:
+            # back button
+            self.backButton.handle_event(event)
+            if self.backButton.clicked:
+                if self.showSettings:
+                    self.showSettings = False
+                else:
+                    self.showLoadScreen = False
+                self.backButton.reset()
+        else:
             for button in self.buttons:
                 button.handle_event(event)
                 if button.color == button.active_color:
@@ -389,13 +431,3 @@ class Menu:
                         self.showLoadScreen = True
                     else:
                         return button.text
-        if (self.showLoadScreen or self.showSettings):
-            # back button
-            pygame_widgets.update(event)
-            self.backButton.handle_event(event)
-            if self.backButton.clicked:
-                if self.showSettings:
-                    self.showSettings = False
-                else:
-                    self.showLoadScreen = False
-                self.backButton.reset()

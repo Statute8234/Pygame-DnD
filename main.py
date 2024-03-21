@@ -54,8 +54,8 @@ def main():
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE and show_mainmenu == False:
-                    show_pauseMenu = not(show_pauseMenu)
-                    show_playerSheet = not(show_playerSheet)
+                    show_pauseMenu = True
+                    show_playerSheet = False
             elif event.type == pygame.VIDEORESIZE:
                 screenWidth, screenHeight = event.size
             # main menu events

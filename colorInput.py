@@ -50,6 +50,7 @@ class InputBox:
         self.width = width
         self.height = height
         self.textColor = textColor
+        self.active = False
         self.active_color = active_color
         self.inactive_color = inactive_color
         self.color = self.inactive_color

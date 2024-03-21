@@ -23,6 +23,9 @@ BLACK = (0,0,0)
 mainMenu = menu.Menu(screen)
 playerSheet = menu.PlayerSheet(screen)
 pauseMenu = menu.PauseMenu(screen)
+# buttons
+pauseButton = menu.Button(10,10,100,50,"Pause",RED,BLACK)
+playerSheetButton = menu.Button(120,10,100,50,"Player Sheet",RED,BLACK)
 # display functions
 brightness = 1.0
 frameRate = 64
@@ -61,24 +64,34 @@ def main():
                 if mainMenu.handle_event(event) == "Exit":
                     running = False
                     sys.exit()
-                if mainMenu.handle_event(event) == "New Game" or mainMenu.handle_event(event) == "Continue":
+                if mainMenu.handle_event(event) == "New Game":
                     show_mainmenu = False
                     show_playerSheet = True
+                if mainMenu.handle_event(event) == "Continue":
+                    show_mainmenu = False
+                    show_playerSheet = False
             # pause menu
             if show_pauseMenu:
                 pauseMenu.handle_event(event)
                 if pauseMenu.handle_event(event) == "Resume":
                     show_pauseMenu = False
-                    show_playerSheet = False
                 if pauseMenu.handle_event(event) == "Quit":
                     show_pauseMenu = False
                     show_mainmenu = True
-                    show_playerSheet = False
             # player sheet
             if show_playerSheet:
                 playerSheet.handle_event(event)
                 if playerSheet.handle_event(event) == "Resume":
                     show_playerSheet = False
+            if not(show_MainMenu and show_pauseMenu) and show_playerSheet == False:
+                playerSheetButton.handle_event(event)
+                if playerSheetButton.clicked:
+                    playerSheetButton.reset()
+                    show_playerSheet = True
+                pauseButton.handle_event(event)
+                if pauseButton.clicked:
+                    pauseButton.reset()
+                    show_pauseMenu = True
         # screen
         screen.fill(WHITE)
         if show_mainmenu:
@@ -92,6 +105,9 @@ def main():
             Background_volume,soundEffect_volume,frameRate,brightness = pauseMenu.updateData(Background_volume, soundEffect_volume, frameRate, brightness)
             pauseMenu.update(screenWidth, screenHeight)
             pauseMenu.draw()
+        else:
+            pauseButton.draw(screen)
+            playerSheetButton.draw(screen)
         # update
         adjust_brightness(screen, brightness)
         pygame.display.flip()

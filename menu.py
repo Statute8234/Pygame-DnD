@@ -241,7 +241,8 @@ class PlayerSheet:
         self.textBox = inputBox.InputBox(100,60,100,25,BLACK,RED,GREEN)
         self.Resume = Button(50, 540, 100, 50, "Resume", RED, BLACK)
         self.playerImage = CircleButton(200,30, 20, "Assets\photo.png")
-        self.invintory = inventorySystem.Inventory(30,420,100,550,10,1)
+        self.invintory = inventorySystem.Inventory(30,420,525,50,10,3)
+        self.colorPicker = inputBox.ColorPicker(600,600)
 
     def draw(self):
         for label in self.labels.values():
@@ -251,23 +252,24 @@ class PlayerSheet:
         self.Resume.draw(self.screen)
         self.playerImage.draw(self.screen)
         self.invintory.draw(self.screen)
+        self.colorPicker.draw(self.screen)
 
     def update(self, screenHeight, screenWidth):
         button_x = (screenHeight / 2) - 50
         self.Resume.x = button_x
         self.Resume.y = screenWidth - 70
-        new_width = (screenWidth - 150)
-        new_Height = new_width / 5
-        new_posX = (screenHeight / 2) - (new_width / 2)
-        new_posY = (screenWidth / 2) + (new_Height * 1.8)
-        self.invintory.update(new_posX, new_posY,new_Height, new_width)
+        new_width, new_height = (screenHeight - 75), (screenWidth - 450)
+        new_posX, new_posY = (screenHeight / 2) - (new_width / 2), (screenWidth - (new_height + 100))
+        self.invintory.update(new_posX, new_posY, new_width, new_height)
         self.textBox.update()
+        self.colorPicker.update()
+        self.playerImage.color = self.colorPicker.update()
 
     def handle_event(self, event):
-        pygame_widgets.update(event)
         self.textBox.handle_event(event)
         self.playerImage.handle_events(event)
         self.invintory.handle_event(event)
+        self.colorPicker.handle_event(event)
         # button
         self.Resume.handle_event(event)
         if self.Resume.clicked:

@@ -17,7 +17,7 @@ class InputBox:
         self.text_surface = self.base_font.render(self.user_text, True, self.textColor)
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.input_rect)
+        pygame.draw.rect(screen, self.color, self.input_rect, 2)
         screen.blit(self.text_surface, (self.input_rect.x + 5, self.input_rect.y + 5))  # Offset text surface to avoid clipping
 
     def update(self):

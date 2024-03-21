@@ -9,6 +9,7 @@ from tkinter import filedialog
 import numpy as np
 # hand made files
 import inputBox
+import inventorySystem
 # color
 def RANDOM_COLOR():
     return (random.randint(0,255),random.randint(0,255),random.randint(0,255))
@@ -238,6 +239,7 @@ class PlayerSheet:
         self.textBox = inputBox.InputBox(100,60,100,25,BLACK,RED,GREEN)
         self.Resume = Button(50, 540, 100, 50, "Resume", RED, BLACK)
         self.playerImage = CircleButton(200,30, 20, "Assets\photo.png")
+        self.invintory = inventorySystem.Inventory((300,500), "Assets\Inventory.png")
 
     def draw(self):
         for label in self.labels.values():
@@ -246,6 +248,7 @@ class PlayerSheet:
         self.textBox.draw(self.screen)
         self.Resume.draw(self.screen)
         self.playerImage.draw(self.screen)
+        self.invintory.draw(self.screen)
 
     def update(self, screenHeight, screenWidth):
         button_x = (screenHeight / 2) - 50

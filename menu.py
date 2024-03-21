@@ -126,7 +126,7 @@ class CircleButton:
 class PauseMenu:
     def __init__(self, screen):
         self.screen = screen
-        self.title = Text("Menu", 100, BLACK, (50, 50))
+        self.title = Text("Pause", 100, BLACK, (50, 50))
         self.buttons = [Button(50,120,200,50,"Resume",RED,BLACK),
                         Button(50,180,200,50,"Options",RED,BLACK),
                         Button(50,240,200,50,"Quit",RED,BLACK),]

@@ -2,6 +2,16 @@
 
 This Python code creates a basic game with menus and adjustable settings using the Pygame library. It imports modules, initializes the Pygame window, defines RGB color values, creates two menu objects, and handles display functions. The main game loop runs continuously until the user exits, handling events like window resizing, key presses, and menu interactions. The main function initializes the Pygame environment.
 
+[![Static Badge](https://img.shields.io/badge/pygame-gray)](https://pypi.org/project/pygame/)
+[![Static Badge](https://img.shields.io/badge/sys-olive)](https://pypi.org/project/sys/)
+[![Static Badge](https://img.shields.io/badge/pygame_gui-yellow)](https://pypi.org/project/pygame_gui/)
+[![Static Badge](https://img.shields.io/badge/random-cyan)](https://pypi.org/project/random/)
+[![Static Badge](https://img.shields.io/badge/sys-black)](https://pypi.org/project/sys/)
+[![Static Badge](https://img.shields.io/badge/pygame_widgets-navy)](https://pypi.org/project/pygame_widgets/)
+[![Static Badge](https://img.shields.io/badge/random-yellow)](https://pypi.org/project/random/)
+[![Static Badge](https://img.shields.io/badge/tkinter-orange)](https://pypi.org/project/tkinter/)
+[![Static Badge](https://img.shields.io/badge/numpy-gray)](https://pypi.org/project/numpy/)
+
 ## Table of Contents
 
 - [About](#about)
